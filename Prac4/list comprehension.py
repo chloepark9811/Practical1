@@ -9,7 +9,7 @@ for name in names:
 print(first_initials)
 
 first_initials = [name[0] for name in names]
-print(first_initials)
+print(first_initials) 33333333333333333333333333333333333333333333333333333333333333333333333333333333
 
 
 full_initials = [name.split()[0][0] + name.split()[1][0] for name in

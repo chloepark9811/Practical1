@@ -1,219 +1,345 @@
-# Practical 09 - OS
+# Practical 10 - Recursion, Testing, API, Flask
 
-Today we will explore Python as an automation tool to help us automate
-repetitive tasks with files and the **os** module.
+Today we will explore the use of **recursion**, tools for **testing**,
+an **API** for Wikipedia and the very cool **Flask** Web framework. This
+is the final marked practical for the subject, and must be
+satisfactorily attempted during the prac time (no marking next week).
+You don't have to finish it but you have to do good work.
 
-# Walkthrough Example
+Start by downloading the prac files from this folder.  
+These files have `# TODO` comments to show you what steps to do.
 
-Download all of the files from this prac folder.
+# Recursion
 
--   Extract the **Lyrics.zip** file so it's in a subdirectory called 
-    Lyrics inside this prac folder.
+![Pencil icon](../images/03image1.png)
 
--   Open the directory Lyrics/Christmas so you can see the files listed
-    in your file browser or PyCharm  
-    (but note that PyCharm doesn't always refresh as often as you might
-    like).
+Open recursion.py and read the code, then **write down** (on paper, like
+it's a practice exam question!) the expected output for the first
+function, `do_it(5)` **BEFORE** you run it.
 
--   Open the **os_demos.py** file, read the code and comments to see
-    what it's demoing, then run it.  
-    Notice that it imports the **os** and **shutil** modules for working
-    with the operating system and files.
+Then run it to see if you were right.
 
-## Modifications:
+Then use the **debugger** to step through the execution to see what's
+happening.
 
-(Follow the TODO comments in the code.)
+Do the same for the next function - start by uncommenting 
+`# do_something(4)`
 
-1.  Run the program again, and you should get a crash due to trying to
-    create an existing directory.  
-    Use exception handling to avoid this crash. 
-    Remember that you can read the crash message to see what exception you need to handle.
+You'll find a problem... The function should print the squares of
+positive numbers from n down to 0, but instead it runs until the maximum
+recursion limit is reached...  
+**Fix this.**
 
-2.  There are two commented-out options. Try each, one at a time:  
-    **Note:** renaming or moving files changes their names (amazing!),
-    so to re-run your code with the files in their original state, you
-    can just re-copy them from the Lyrics.zip file provided.
+**Challenge for later:** Write another version of this that recursively
+prints the squares backwards (i.e. on the way back after hitting the
+base case).
 
-    a.  **rename** files (in same directory) using `os.rename()`
+### Recursion From Scratch
 
-    b.  **move** files to a subdirectory with the new name using
-        `shutil.move()`
+Do this next exercise in the same file, recursion.py.
 
-3.  Restore your original files (extract the zip file again).  
-    The last part of this file demonstrates the `os.walk()` function that "walks"
-    through all subdirectories returning useful information about the
-    contents...  
-    Comment out the call to `main()` and uncomment `demo_walk()`.  
-    Run the code to see how walk works.
+![Pyramid](../images/10image2.png)  
 
-4.  Add a loop that renames all of the files in `filenames`.  
-    This should rename every file in every subdirectory... but 
-    (depending on how you did this...) you will likely find that you get an error like
-    
-        FileNotFoundError: [Errno 2] No such file or directory: 'MySaviourLives.txt' -> 'MySaviourLives.txt'
-    
-    This is because `os.walk()` does NOT actually change into the directories.
-    So, we can either do that manually or in our rename, we can use the path.  
-    
-5.  To get a file reference that `os.rename()` can work correctly with, add the path like:
-    `os.path.join(directory_name, filename)`  
-    First print this, so you can see what it looks like, then change the code so you
-    actually rename the file - making sure to add the path in both the `src` and `dst` parameters for `os.rename()`.    
+Consider that you want to try for the
+world 2D pyramid block building record.  
+Write a program to get the number of rows from the user and calculate
+the number of blocks you will need given the number of rows (n) to make
+a 2D pyramid.  
+**Do this first as a simple loop in a function**, then **write a
+recursive function** to calculate the number of blocks. As always, think
+about good function design. It should **take in** the number of rows and
+**return** the number of blocks.
+
+The number of blocks for n rows is:
+
+`n + (n-1) + (n-2) + ... 2 + 1`
+
+E.g. for 6 rows, it is 6 + 5 + 4 + 3 + 2 + 1 = 21
+
+# Testing
+
+Follow the TODO instructions in testing.py, taking note that the code
+shows you examples to learn form.
+
+1.  Fix the `repeat_string` function so that it passes the `assert` test. 
+ 
+    Note: Don't change the test!  
+    The failing test shows that the function is broken; fix the function.
+
+2.  Write at least two `assert` statements to show if Car sets the fuel
+    correctly.
+
+3.  Uncomment the `doctest.runmod()` line to see how the doctests run.
+
+    Note: PyCharm might detect your tests and automatically run your
+    program in doctest mode.
+
+4.  Fix the failing `is_long_word` function
+
+5.  Write and test (using doctest) a function to format a phrase as a
+    sentence - starting with a capital and ending with a single full
+    stop. See the comments for how to do this step by step, taking note
+    that you should write your tests _before_ your code.  
+    E.g. the function should change "hello" into "Hello."
+
+# Wikipedia API & Python Library
+
+Until now, we've only worked on our local computers, interacting with
+local files, but never talking to the great big computer in the sky...
+so let's do that now :)
+
+Many systems have public **APIs** (Application Programmer Interfaces) that
+we can use. An API is a set of functions that we can call to send and
+receive data to and from a system. You can write code to interact with
+things like Twitter, Flickr, weather services, government databases, NSA
+spy satellites and more...
+
+We'll start with Wikipedia.
+
+Instead of writing our own HTTP calls to the Wikipedia API, we can make
+use of a Python library that abstracts the details away and presents a
+simpler, Python-based, API for us. *We need to install that now*.
+
+The lab PCs should let us install packages. If it looks like the package
+is still installing (infinitely), just carry on as if it were finished
+and it should work... or just restart PyCharm if you'd like it to stop
+telling you it's installing! If you really can't install the wikipedia
+package, then skip those parts of the prac that use it.
+
+In PyCharm, go to Settings/Preferences > Project: Practicals > Project
+Interpreter (it might look a bit different but you should have been here
+before) and click the plus button to install a package. Type "wikipedia"
+to find the one we want, and then click "Install Package".
+
+![PyCharm install package](../images/10image3.png)
+
+The quick start documentation for the wikipedia package can be found at:
+<https://wikipedia.readthedocs.io/en/latest/quickstart.html>
+
+As this documentation shows, a good way to learn a new package like this
+is via the console. Open the console in PyCharm, then follow the docs and 
+quickly try out functions like `search()`, `summary()` and `page()`.  
+Get a page and see what properties it has.
+
+**Create a new file** called **wiki.py** and write a small script that
+prompts the user for a page title or search phrase, then prints the
+summary of that page. Use a simple loop that continues doing this until
+the user enters blank input.
+
+Try this with a few page titles and see what happens.  
+(Note that you might get a warning about an outdated use of the
+BeautifulSoup package. We can't fix that so ignore it.)
+
+Try it with the search/title "Monty" and you should find that the
+Wikipedia API returns a "disambiguation" page, so you need to handle
+that **exception** as explained in the API's docs.
+
+Now **modify** your program so when it gets the page, it prints the
+title, summary and the URL.
+
+# Flask Web Framework
+
+Until now, we have made only one type of project, "Pure Python", and we
+always interacted via PyCharm with the console - or using a GUI we made
+with Kivy. A very common way to deliver software these days is via a Web
+browser. Some programming languages are designed for the Web - like
+JavaScript for the browser and PHP for Web servers, but we can also use
+Python... if we use it via a "Web Framework".
+
+There are a number of great frameworks, like Django, Web2Py and Pyramid,
+but today we will use **Flask**.  
+(You may be interested to know that [WakaTime](https://wakatime.com) 
+is written in Python and uses Flask.)
+
+Flask docs are at: <http://flask.pocoo.org/docs> and Flask is also
+covered in the textbook in **Appendix E**.
+
+In PyCharm, create a new project and choose Flask. (Note that you need
+the Professional edition, not the Community edition to see this screen
+when making a new project.) If this is the first time you've done this,
+PyCharm should install the Flask package and other dependencies like
+Jinja for templating.
+
+![New Flask Project window](../images/10image4.png)
+
+The default project comes with a folder structure and a simple "hello
+world" example:
+
+```python
+from flask import Flask
+
+app = Flask(__name__)
 
 
-# Intermediate Exercises
+@app.route('/')
+def hello_world():
+    return 'Hello World!'
 
-_(Please read this whole section before starting work on it!)_  
-**Note:** Set yourself a 30-minute timer and if you get stuck on this, 
-just save your work and come back to it later.  
-The next (do-from-scratch) exercises are another great example of os automation
-based on a real-world need, so get moving on them.
 
-The files we're working with today are from a **real-world example**.
-Lindsay uses words projection software at church that takes these files.
-The lyrics files had all kinds of different naming formats and he
-wanted them to follow the same format.  
-So, Lindsay wrote a Python script to rename the files to be consistent.
-This is another example of using programming to automate tasks in your
-everyday life! Nice :)  
-Now it's your turn to write this script...
+if __name__ == '__main__':
+    app.run()
 
-This program will be very similar to the walkthrough we just did, but
-the focus is now on the renaming part:  
-the `get_fixed_filename()` function.
+```
 
--   *Commit your work.*  
-    Copy the code from os_demos.py to a new file called
-    **cleanup_files.py**.  
-    Clean up (remove) any commented-out code or TODOs/comments from the
-    demo that you don't need in this program.  
-    *Commit your work.*
+## Explanation
+After importing the flask class, we create an instance of the Flask class called `app`, passing the name of this file                
 
--   Notice that the existing files have been named inconsistently, e.g.
-    some are PascalCase like "SilentNight.txt" and some have spaces like
-    "Away In A Manger.txt" or are not in Title Case like  
-    "O little town of bethlehem.TXT"  
-    Write code to make them consistently use the format like
-    "Away_In_A_Manger.txt", "Silent_Night.txt" and
-    "O_Little_Town_Of_Bethlehem.txt" respectively:
+`@` is used for what's called a **"decorator"**.                              
+This is metadata about the following function.  
+In Flask, the `@app.route` decorator specifies the URL that will result in the function following it being called.        
 
-  |**Existing Filename (inconsistent format)**  | **Desired Filename (consistent)**
-  |---------------------------------------------| ------------------------------------
-  |Away In A Manger.txt                         | Away_In_A_Manger.txt
-  |SilentNight.txt                              | Silent_Night.txt
-  |O little town of bethlehem.TXT               | O_Little_Town_Of_Bethlehem.txt
-  |ItIsWell (oh my soul).txt                    | It_Is_Well_(Oh_My_Soul).txt
+Then we have a normal function (`hello_world()`), but importantly it returns a string.                          
+All Flask "views" (functions that will be displayed in the browser) must return strings.
+                                  
+Running a Flask app (`app.run()`) looks similar to Kivy, doesn't it?
 
-### Important
+Run the code and you should see output like the following, including a
+link to click on to see your amazing new Python-based website. Click the
+link in the Python console to view "Hello World!" in your browser.
 
-Do NOT try and solve all of these cases at once. Rather, work up to
-them, building the **`get_fixed_filename()`** function that returns a
-fixed filename. Test just printing the names before renaming the files.
-When it works for one case, make it handle another one and so on...
-iterative development!
+`* Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)`
 
-### Hints
+Modify the function output to return `<h1>Hello World :)</h1>` and
+rerun the program by pressing Ctrl+F5.  
+To see the new results, you'll need to go back to your browser and hit
+refresh, so do this now.
 
--   You will **not** find simple string methods like **`replace()`** that
-    can solve all of this problem for you.
+As you should see, pages/views are created using HTML. Learning HTML is
+beyond the scope of this prac, so hopefully you already know some.
 
--   A good approach would be to **step through each character with its
-    index** with **`enumerate()`** and consider how it relates to the
-    character before or after it, since the context is what matters
-    here.  
-    E.g. if the current character **`islower()`** and the next character
-    **`isupper()`** such as with the "tN" in "SilentNight"), then you
-    know you need to put '_' between them.
+Make another view function by using the 'route' shortcut... that is,
+type 'route' and wait for the popup, then choose the first option by
+pressing Enter... and PyCharm will create the decorator and function
+definition stubs.
 
--   You can start with an empty string `""` and build it using string
-    concatenation step-by-step as you determine what the next character
-    should be. E.g. for the above case, you can add the 't', then the
-    '_' to your new filename string, then move on to the next
-    iteration in the for loop where you will add the 'N'.
+![route autocomplete in PyCharm](../images/10image5.png)
 
-# Do-from-scratch Exercises
+Type 'greet' as the function name and route name (these can be
+different, but we'll keep them the same). Replace 'pass' with a simple
+`return "Hello"` statement.
 
--   Extract the **FilesToSort.zip** file, which contains files with
-    various names and extensions.
+Re-run the program, then change your browser's URL by adding /greet to
+the end, like:
 
--   Write code to sort these files into subdirectories for each
-    extension.
-    
--   **Note:** The provided files are samples. Your solutions must be 
-    able to work for any files with any extensions.  
-    Do not hard-code any file names or extensions.
+<http://127.0.0.1:5000/greet>
 
-## Version 1
+This is a bit simple so far... but we're getting there...
 
-Do this first version in **sort_files_1.py**. 
+Note: If you ever get an "Internal Server Error" in the browser... this
+is *your* server (Python program)!  
+Go back to PyCharm and look for error messages in the console.
 
-Use **`os.mkdir()`** to create a directory with for each new extension
-that your program finds and use **`shutil.move()`** to move files into
-these new directories.  
-E.g. move all files ending in ".txt" to a directory you create called
-"txt", and all ".doc" files to a "doc" directory.
+Add another decorator so that the greet function runs for multiple "sub"
+routes and takes a parameter, like:
 
-Do not try and create directories you've already made.
+```python
+@app.route('/greet')  
+@app.route('/greet/<name>') 
+def greet(name=""):
+    return "Hello {}".format(name)
+```
 
-**Tip:** You might like to add the extensions to a list or a **set** as
-you process the files.
+Re-run and test with the URLs <http://127.0.0.1:5000/greet> and
+<http://127.0.0.1:5000/greet/Yourname>
 
-|**Before:**                                   | **After:**
-| ---------------------------------------------| ---------------------------------------------
-|![FilesToSort before](../images/09image1.png) | ![FilesToSort after](../images/09image2.png)   
+This is one way that you can pass parameters (all strings) to Flask view
+functions.
 
-## Version 2
+## Challenge
 
-Do this second version in **sort_files_2.py**. 
+In an earlier prac, you wrote a function to convert between Fahrenheit
+and Celsius. Copy or rewrite this function as a regular function (not a
+route). It should take a Celsius float value and return a Fahrenheit
+float.
 
-Let the user categorise different extensions as the program encounters
-these, then move them all into those subdirectories. E.g.
+Now, create a new route so that you can enter Celsius values in the URL
+and see the Fahrenheit values in the Web page, like below. Note that the
+parameter passed via the URL (100.2 in this case) is a string.
 
--   one user might want a category "docs" containing all .doc, .docx,
-    .rtf, .txt... and an "images" folder containing .jpg, .gif, .png.
+![Fahrenheit conversion in website view](../images/10image6.png)
 
--   another user might want a category "office" containing .doc, .docx,
-    .xls, but put the .txt files in a "text" category directory.
+That's version 1... Once it works, modify it so the output shows the
+input value and the result with useful text.
 
-**Tip:** Add the extensions to a **dictionary** and make a list of the
-categories as you process the files.
+## Flask + Wikipedia API
 
-**Note:** there are two parts to this - **categorising the extensions**
-and **moving the files**. You should approach them as separate steps in your 
-iteratve problem solving process, but the final resulting code should be efficient 
-(e.g. don't use unnecessary loops).
+Now let's combine the Wikipedia API with our new-found Web programming
+powers...
 
-For one _example_ run with these files (user input in **bold**):
+Clone or download the demo from
+<https://github.com/lindsaymarkward/flaskdemo>
 
-<pre>
-What category would you like to sort doc files into? <strong>Docs</strong>
-What category would you like to sort docx files into? <strong>Docs</strong>
-What category would you like to sort png files into? <strong>Images</strong>
-What category would you like to sort gif files into? <strong>Images</strong>
-What category would you like to sort txt files into? <strong>Docs</strong>
-What category would you like to sort xls files into? <strong>Spreadsheets</strong>
-What category would you like to sort xlsx files into? <strong>Spreadsheets</strong>
-What category would you like to sort jpg files into? <strong>Images</strong>
-</pre>
+Run it and test it, then study the code to find a few new things:
 
-|**Before:**                                   | **After:**
-| ---------------------------------------------| ---------------------------------------------
-|![FilesToSort before](../images/09image1.png) | ![FilesToSort after](../images/09image3.png)   
+-   This demo uses **Jinja** HTML templates, which makes formatting Web page
+    outputs much nicer than hard-coding them in Python.
+
+-   It also uses "template inheritance", so that you can reuse parts of
+    templates in other templates. That's how the navigation and footer
+    persist.
+
+-   The search route has an HTML form in it. When it's submitted, it
+    sends the data via the HTTP "post" method, so the route has to be
+    customised to accept this. It then gets the data from the "request"
+    object.
+
+-   `url_for()` is a function that returns the correct URL for a given
+    view/route function so you don't have to know the exact path.
+
+### Modifications
+
+Right, so now it's your turn to make this more interesting and
+appealing. What else could you do to it?
+
+-   Start by adding the page title to the results
+
+-   Then add some details to the **about** page using a new template
+
+-   Then add a link to the about page in your layout template
+
+-   Then go crazy... :)
+
+Before you go... have you completed the **YourJCU subject survey** for
+this and your other subjects?  
+If not, please do that right now on LearnJCU.  
+***Thank you... your input is extremely valuable!***
 
 # Practice & Extension Work
 
-## Check files for missing data
+1.  Write a program that prints a string from the outside in, **using
+    recursion**.  
+    E.g. if the string to print is "Programming", your program should
+    print: "P g r n o i g m r m a".  
+    Another example:  
+    
+        Enter a string: 123456  
+        1 6 2 5 3 4  
+        
+    Remember to analyse and design this problem first. Think about the
+    base and recursive cases - when will it stop (base) and how will it
+    reduce the problem (recursive) each time?
 
-The song lyric text files should all have copyright information in them
-on a line that starts with **.i** like:
+2.  Write a recursive function to check whether or not a string is
+    a palindrome.  
+    A palindrome is a word or phrase that reads the same forwards as
+    backwards. The following are examples:
 
-    .i (c) 2011 Thankyou Music (Admin. by Crossroad Distributors Pty. Ltd.)
+    -   Hannah
+    
+    -   abcba
+    
+    -   (ignoring case, spaces and punctuation) A Toyota's a Toyota
 
-Write a program that reports the names and directories of all of the files
-that are missing this line.
+3.  Add **`assert`** and **`doctest`** testing to your work from an earlier
+    prac - e.g. the `is_valid_password()` function from prac 2 and the
+    `get_fixed_filename()` function from prac 9.
 
-**Version 2**
+4.  During the holidays you might like to experiment with Flask and see
+    if you can make some cool Web interfaces for your existing
+    programs...
 
-Automatically look up the copyright information from the Internet based
-on the song title and author, then add the data to the file...  
-Good luck with that ;)
+    A **great idea** would be to make programs with 3 interfaces: console,
+    Kivy and Web, and reuse as much common code as you can. That should
+    help you see how modular your work is. This would help you
+    understand the **MVC** (Model-View-Controller) pattern more, as you just
+    want to create 3 different views that use the same model.
